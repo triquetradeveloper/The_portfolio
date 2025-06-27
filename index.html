@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Triquetra Developer</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <!-- Lightbox CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" />
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- GLTF Loader -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- GSAP for smooth animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+  <style>
+    :root {
+      --primary-glow: #00ffcc;
+      --secondary-glow: #00f7ff;
+      --accent-glow: #ff00ff;
+      --dark-bg: #050506;
+      --light-bg: #f9fafb;
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --glass-shadow: rgba(31, 38, 135, 0.37);
+      --text-shadow: rgba(0, 0, 0, 0.5);
+      --hover-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Modern Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+      border-radius: 4px;
+      transition: var(--hover-transition);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(45deg, var(--secondary-glow), var(--accent-glow));
+    }
+
+    /* Selection style */
+    ::selection {
+      background: var(--primary-glow);
+      color: var(--dark-bg);
+    }
+
+    /* Modern Glass Effect */
+    .glass-modern {
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1),
+        rgba(255, 255, 255, 0.05)
+      );
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px 0 var(--glass-shadow);
+    }
+
+    /* Animated border */
+    .border-gradient {
+      position: relative;
+      background: linear-gradient(var(--dark-bg), var(--dark-bg)) padding-box,
+                  linear-gradient(45deg, var(--primary-glow), var(--secondary-glow)) border-box;
+      border: 2px solid transparent;
+      animation: borderRotate 4s linear infinite;
+    }
+
+    @keyframes borderRotate {
+      from { border-image-source: linear-gradient(0deg, var(--primary-glow), var(--secondary-glow)); }
+      to { border-image-source: linear-gradient(360deg, var(--primary-glow), var(--secondary-glow)); }
+    }
+
+    /* Text gradient animation */
+    .text-gradient-animate {
+      background: linear-gradient(
+        45deg,
+        var(--primary-glow),
+        var(--secondary-glow),
+        var(--accent-glow),
+        var(--primary-glow)
+      );
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: textGradient 8s ease infinite;
+    }
+
+    @keyframes textGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    body {
+      scroll-behavior: smooth;
+      transition: all 0.5s ease;
+      font-family: 'Poppins', sans-serif;
+      overscroll-behavior: none;
+      background-image: 
+        radial-gradient(circle at top right, rgba(0, 255, 204, 0.1), transparent 50%),
+        radial-gradient(circle at bottom left, rgba(0, 247, 255, 0.1), transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Stylish scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+      border-radius: 5px;
+    }
+
+    /* Glass effect */
+    .glass-effect {
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+
+    /* Neon text effect */
+    .neon-text {
+      text-shadow: 
+        0 0 5px var(--primary-glow),
+        0 0 10px var(--primary-glow),
+        0 0 20px var(--primary-glow),
+        0 0 40px var(--secondary-glow);
+      animation: neon-pulse 2s infinite alternate;
+    }
+
+    @keyframes neon-pulse {
+      from {
+        text-shadow: 
+          0 0 5px var(--primary-glow),
+          0 0 10px var(--primary-glow),
+          0 0 20px var(--primary-glow),
+          0 0 40px var(--secondary-glow);
+      }
+      to {
+        text-shadow: 
+          0 0 10px var(--primary-glow),
+          0 0 20px var(--primary-glow),
+          0 0 40px var(--primary-glow),
+          0 0 80px var(--secondary-glow);
+      }
+    }
+
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradient-shift 8s infinite;
+    }
+
+    @keyframes gradient-shift {
+      0%, 100% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(60deg); }
+    }
+
+    /* Blob animation */
+    @keyframes blob {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(20px, -20px) scale(1.1); }
+      50% { transform: translate(-20px, 20px) scale(0.9); }
+      75% { transform: translate(20px, 20px) scale(1.05); }
+    }
+
+    .animate-blob {
+      animation: blob 10s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .animation-delay-2000 {
+      animation-delay: 2s;
+    }
+
+    .animation-delay-4000 {
+      animation-delay: 4s;
+    }
+
+    /* Tilt animation */
+    @keyframes tilt {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(2deg); }
+      75% { transform: rotate(-2deg); }
+    }
+
+    .animate-tilt {
+      animation: tilt 10s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hover effects */
+    .hover-lift {
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-5px);
+    }
+
+    /* Card styles */
+    .card-gradient {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 
+        0 8px 32px 0 rgba(31, 38, 135, 0.37),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    .card-gradient:hover {
+      border-color: var(--primary-glow);
+      box-shadow: 
+        0 8px 32px 0 rgba(31, 38, 135, 0.37),
+        inset 0 0 0 1px var(--primary-glow),
+        0 0 15px var(--primary-glow);
+    }
+
+    /* Skill bar animation */
+    .skill-bar {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      animation: skill-shine 3s infinite;
+    }
+
+    @keyframes skill-shine {
+      100% { left: 100%; }
+    }
+
+    /* Button styles */
+    .btn-modern {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      z-index: 1;
+    }
+
+    .btn-modern::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-modern:hover::before {
+      opacity: 1;
+    }
+
+    /* Loading Screen */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--dark-bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .loading-content {
+      position: relative;
+      width: 200px;
+      height: 200px;
+    }
+
+    .loading-circle {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 4px solid transparent;
+      mix-blend-mode: overlay;
+      animation: rotate var(--duration) var(--timing) infinite;
+    }
+
+    .loading-circle:nth-child(1) {
+      border-top-color: var(--primary-glow);
+      --duration: 1.5s;
+      --timing: ease-in-out;
+    }
+
+    .loading-circle:nth-child(2) {
+      border-right-color: var(--secondary-glow);
+      --duration: 2s;
+      --timing: ease-out;
+    }
+
+    .loading-circle:nth-child(3) {
+      border-bottom-color: var(--accent-glow);
+      --duration: 2.5s;
+      --timing: ease-in;
+    }
+
+    .loading-logo {
+      position: absolute;
+      inset: 25%;
+      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes rotate {
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.05); opacity: 1; }
+    }
+
+    .loading-text {
+      position: absolute;
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 1.2rem;
+      white-space: nowrap;
+      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow), var(--accent-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: gradient-shift 2s infinite;
+    }
+
+    .fade-out {
+      animation: fadeOut 1s forwards;
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+    .bg-gif {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://media.giphy.com/media/qgQUggAC3Pfv687qPC/giphy.gif') center/cover no-repeat;
+      opacity: 0.25;
+      z-index: -1;
+      animation: pulse 8s infinite ease-in-out;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.25; }
+      50% { opacity: 0.35; }
+    }
+    .skill-bar {
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+      background: rgba(26, 32, 44, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(4px);
+    }
+    
+    .skill-fill {
+      height: 100%;
+      transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(90deg, var(--primary-glow), var(--secondary-glow));
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+    }
+    .project-card {
+      position: relative;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+      border: 2px solid transparent;
+      overflow: hidden;
+    }
+    .project-card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 15px 30px rgba(0, 255, 255, 0.5);
+      border-color: #00ffcc;
+    }
+    .project-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, rgba(0, 255, 255, 0.5), rgba(0, 204, 255, 0.3));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.25rem;
+      font-weight: bold;
+      text-shadow: 0 0 8px #000;
+    }
+    .project-card:hover .project-overlay {
+      opacity: 1;
+    }
+    .modal {
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      background: linear-gradient(135deg, #1a202c, #2d3748);
+      border: 2px solid #00ffcc;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #three-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .content-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+
+    .floating-cube {
+      position: fixed;
+      width: 50px;
+      height: 50px;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+
+    .dark {
+      background-color: #050506;
+      color: #ffffff;
+    }
+    .light {
+      background-color: #f9fafb;
+      color: #111827;
+    }
+    
+    /* Glowing effects */
+    .glow-text {
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    }
+    
+    .hover-glow {
+      transition: all 0.3s ease;
+    }
+    
+    .hover-glow:hover {
+      text-shadow: 0 0 15px rgba(0, 255, 204, 0.8);
+      transform: translateY(-2px);
+    }
+    
+    .section-transition {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+    
+    .section-transition.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .dark .bg-gray-800 {
+      background: linear-gradient(135deg, #1a202c, #2d3748);
+    }
+    .light .bg-gray-800 {
+      background-color: #ffffff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .dark .text-theme {
+      color: #ffffff;
+    }
+    .light .text-theme {
+      color: #111827;
+    }
+    .dark .text-theme-secondary {
+      color: #e2e8f0;
+    }
+    .light .text-theme-secondary {
+      color: #6b7280;
+    }
+    .dark .bg-theme-input {
+      background: linear-gradient(90deg, #2d3748, #4a5568);
+    }
+    .light .bg-theme-input {
+      background-color: #e5e7eb;
+    }
+    .dark .text-theme-input {
+      color: #ffffff;
+    }
+    .light .text-theme-input {
+      color: #111827;
+    }
+    .nav-link:hover {
+      transform: scale(1.1);
+      text-shadow: 0 0 10px #00ffcc;
+    }
+    .btn-glow {
+      background: linear-gradient(90deg, #00ffcc, #00f7ff);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .btn-glow:hover {
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+      transform: scale(1.05);
+    }
+    .icon-glow:hover {
+      text-shadow: 0 0 10px #00ffcc;
+      transform: scale(1.2);
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .float-animation {
+      animation: float 3s infinite ease-in-out;
+    }
+    .tag {
+      background: linear-gradient(90deg, #2d3748, #4a5568);
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      color: #00ffcc;
+    }
+    /* Mobile Navigation */
+    .mobile-menu-btn {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: block;
+        z-index: 100;
+      }
+      
+      nav ul {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, rgba(26, 32, 44, 0.98), rgba(45, 55, 72, 0.98));
+        padding: 5rem 1rem 1rem;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 90;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease-in-out;
+      }
+      
+      nav ul.show {
+        display: flex;
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .nav-link {
+        font-size: 1.25rem;
+        padding: 0.75rem 1.5rem;
+        width: 100%;
+        text-align: center;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+      
+      .nav-link:hover {
+        background: rgba(0, 255, 204, 0.1);
+      }
+      
+      header .container {
+        padding: 0.75rem 1rem;
+      }
+      
+      #logo-text {
+        font-size: 1.5rem;
+      }
+
+      /* Hamburger Animation */
+      .mobile-menu-btn {
+        width: 30px;
+        height: 30px;
+        position: relative;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+      }
+
+      .mobile-menu-btn span {
+        display: block;
+        width: 100%;
+        height: 2px;
+        background: currentColor;
+        position: absolute;
+        left: 0;
+        transition: all 0.3s ease;
+      }
+
+      .mobile-menu-btn span:nth-child(1) {
+        top: 6px;
+      }
+
+      .mobile-menu-btn span:nth-child(2) {
+        top: 14px;
+      }
+
+      .mobile-menu-btn span:nth-child(3) {
+        top: 22px;
+      }
+
+      .mobile-menu-btn.active span:nth-child(1) {
+        transform: rotate(45deg);
+        top: 14px;
+      }
+
+      .mobile-menu-btn.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .mobile-menu-btn.active span:nth-child(3) {
+        transform: rotate(-45deg);
+        top: 14px;
+      }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 640px) {
+      .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+      }
+      
+      /* Typography */
+      h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+      
+      h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      p, .text-lg {
+        font-size: 0.875rem;
+        line-height: 1.6;
+      }
+      
+      .text-2xl { font-size: 1.25rem; }
+      .text-3xl { font-size: 1.5rem; }
+      .text-4xl { font-size: 1.75rem; }
+      .text-5xl { font-size: 2rem; }
+      .text-7xl { font-size: 2.25rem; }
+      
+      /* Hero Section */
+      #home {
+        min-height: 100vh;
+        padding: 1rem;
+      }
+      
+      /* Skills Section */
+      .skill-bar {
+        height: 8px;
+      }
+      
+      .icon-glow {
+        font-size: 1.25rem;
+      }
+      
+      /* Portfolio Section */
+      .project-card {
+        margin-bottom: 1.5rem;
+      }
+      
+      .project-card img {
+        height: 200px;
+      }
+      
+      .project-overlay {
+        font-size: 0.875rem;
+      }
+      
+      /* Contact Form */
+      #contact form {
+        padding: 1rem;
+      }
+      
+      input, textarea {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+      }
+      
+      /* Modal */
+      .modal {
+        width: 95%;
+        padding: 1rem;
+        margin: 1rem;
+      }
+      
+      .modal img {
+        height: 180px;
+      }
+      
+      .modal-content {
+        padding: 0.75rem;
+      }
+      
+      /* Buttons */
+      .btn-glow {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    /* Tablet Adjustments */
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+      }
+      
+      h1 { font-size: 2.75rem; }
+      h2 { font-size: 2.25rem; }
+      
+      .project-card img {
+        height: 220px;
+      }
+      
+      .modal {
+        width: 90%;
+        max-width: 600px;
+      }
+      
+      .modal img {
+        height: 200px;
+      }
+      
+      .grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* General Mobile Adjustments */
+    @media (max-width: 768px) {
+      .grid-cols-3,
+      .md\\:grid-cols-2,
+      .md\\:grid-cols-3 {
+        grid-template-columns: repeat(1, 1fr);
+        gap: 1rem;
+      }
+      
+      section {
+        padding: 3rem 0;
+      }
+      
+      .skill-bar {
+        margin-bottom: 1rem;
+      }
+      
+      #back-to-top {
+        right: 1rem;
+        bottom: 1rem;
+        padding: 0.5rem;
+      }
+      
+      footer {
+        padding: 1rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body class="dark font-sans">
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loading-content">
+      <div class="loading-circle"></div>
+      <div class="loading-circle"></div>
+      <div class="loading-circle"></div>
+      <div class="loading-logo">
+        <i class="fas fa-code"></i>
+      </div>
+      <div class="loading-text">Loading Experience...</div>
+    </div>
+  </div>
+
+  <!-- Three.js Container -->
+  <div id="three-container"></div>
+
+  <div class="content-wrapper">
+  <!-- Navigation -->
+  <header class="fixed top-0 w-full z-50 glass-effect">
+    <div class="container mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-5 flex justify-between items-center">
+      <div class="flex items-center gap-3 sm:gap-4">
+        <div class="relative group">
+          <div class="absolute -inset-0.5 bg-gradient-to-r from-primary-glow to-secondary-glow rounded-full opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt blur"></div>
+          <img src="https://yt3.googleusercontent.com/033hmWZ563imMSz0qPjdNV8e9UoEdwo798lTsLwjsX82H050SSPAnt5HnLylbbKo_SoA0VPIrw=s160-c-k-c0x00ffffff-no-rj" alt="Logo" class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full" />
+        </div>
+        <span class="gradient-text text-2xl sm:text-3xl md:text-4xl font-extrabold" id="logo-text"></span>
+      </div>
+      <nav class="flex items-center gap-4 sm:gap-6">
+        <button id="mobile-menu-btn" class="mobile-menu-btn text-theme hover:text-cyan-300 transition-all duration-300">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul class="flex gap-3 sm:gap-4 md:gap-6 text-sm sm:text-base" id="nav-menu">
+          <li><a href="#home" class="nav-link relative overflow-hidden group">
+            <span class="relative z-10 text-theme group-hover:text-cyan-300 transition-all duration-300">Home</span>
+            <div class="absolute inset-0 h-full w-0 bg-gradient-to-r from-primary-glow to-secondary-glow opacity-20 group-hover:w-full transition-all duration-300"></div>
+          </a></li>
+          <li><a href="#about" class="nav-link relative overflow-hidden group">
+            <span class="relative z-10 text-theme group-hover:text-cyan-300 transition-all duration-300">About</span>
+            <div class="absolute inset-0 h-full w-0 bg-gradient-to-r from-primary-glow to-secondary-glow opacity-20 group-hover:w-full transition-all duration-300"></div>
+          </a></li>
+          <li><a href="#skills" class="nav-link relative overflow-hidden group">
+            <span class="relative z-10 text-theme group-hover:text-cyan-300 transition-all duration-300">Skills</span>
+            <div class="absolute inset-0 h-full w-0 bg-gradient-to-r from-primary-glow to-secondary-glow opacity-20 group-hover:w-full transition-all duration-300"></div>
+          </a></li>
+          <li><a href="#portfolio" class="nav-link relative overflow-hidden group">
+            <span class="relative z-10 text-theme group-hover:text-cyan-300 transition-all duration-300">Portfolio</span>
+            <div class="absolute inset-0 h-full w-0 bg-gradient-to-r from-primary-glow to-secondary-glow opacity-20 group-hover:w-full transition-all duration-300"></div>
+          </a></li>
+          <li><a href="#contact" class="nav-link relative overflow-hidden group">
+            <span class="relative z-10 text-theme group-hover:text-cyan-300 transition-all duration-300">Contact</span>
+            <div class="absolute inset-0 h-full w-0 bg-gradient-to-r from-primary-glow to-secondary-glow opacity-20 group-hover:w-full transition-all duration-300"></div>
+          </a></li>
+        </ul>
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="relative group text-xl sm:text-2xl">
+          <div class="absolute -inset-2 bg-gradient-to-r from-primary-glow to-secondary-glow rounded-lg opacity-0 group-hover:opacity-50 transition duration-300 blur"></div>
+          <i class="fas fa-moon relative text-theme hover:text-cyan-300 transition-all duration-300"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="relative h-screen flex items-center justify-center text-center overflow-hidden">
+    <div class="bg-gif"></div>
+    <!-- Animated background shapes -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute w-96 h-96 -top-48 -left-48 bg-gradient-to-r from-primary-glow to-secondary-glow rounded-full opacity-20 animate-blob"></div>
+      <div class="absolute w-96 h-96 -bottom-48 -right-48 bg-gradient-to-r from-secondary-glow to-accent-glow rounded-full opacity-20 animate-blob animation-delay-2000"></div>
+      <div class="absolute w-96 h-96 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-accent-glow to-primary-glow rounded-full opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
+    
+    <div class="relative z-10 px-4">
+      <div class="mb-6 sm:mb-8">
+        <h1 class="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-4 tracking-tight text-white">
+          Hello, I'm <span class="gradient-text bg-clip-text">Triquetra</span>
+        </h1>
+        <div class="flex flex-wrap justify-center gap-3 text-lg sm:text-xl md:text-2xl text-theme-secondary font-light">
+          <span class="relative group">
+            <span class="absolute -inset-1 bg-gradient-to-r from-primary-glow to-secondary-glow rounded-lg opacity-0 group-hover:opacity-25 transition duration-300 blur"></span>
+            <span class="relative">Developer</span>
+          </span>
+          <span class="text-theme-secondary">|</span>
+          <span class="relative group">
+            <span class="absolute -inset-1 bg-gradient-to-r from-secondary-glow to-accent-glow rounded-lg opacity-0 group-hover:opacity-25 transition duration-300 blur"></span>
+            <span class="relative">Python</span>
+          </span>
+          <span class="text-theme-secondary">|</span>
+          <span class="relative group">
+            <span class="absolute -inset-1 bg-gradient-to-r from-accent-glow to-primary-glow rounded-lg opacity-0 group-hover:opacity-25 transition duration-300 blur"></span>
+            <span class="relative">JavaScript</span>
+          </span>
+          <span class="text-theme-secondary">|</span>
+          <span class="relative group">
+            <span class="absolute -inset-1 bg-gradient-to-r from-primary-glow to-accent-glow rounded-lg opacity-0 group-hover:opacity-25 transition duration-300 blur"></span>
+            <span class="relative">Full-Stack Web</span>
+          </span>
+        </div>
+      </div>
+      <a href="#contact" class="relative group inline-block">
+        <span class="absolute -inset-1 bg-gradient-to-r from-primary-glow to-secondary-glow rounded-xl opacity-70 group-hover:opacity-100 transition duration-300 blur"></span>
+        <span class="relative inline-block px-6 sm:px-8 py-3 sm:py-4 bg-black bg-opacity-50 text-white text-base sm:text-lg font-bold rounded-xl transition-all duration-300 group-hover:bg-opacity-70">
+          Get in Touch
+          <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-1 transition-transform duration-300"></i>
+        </span>
+      </a>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator">
+      <div class="relative group">
+        <span class="absolute -inset-2 bg-gradient-to-r from-primary-glow to-secondary-glow rounded-full opacity-0 group-hover:opacity-50 transition duration-300 blur"></span>
+        <i class="fas fa-chevron-down relative text-2xl text-theme-secondary group-hover:text-white transition-colors duration-300"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 sm:py-24 md:py-32 fade-in">
+    <div class="container mx-auto px-4 sm:px-6 md:px-8">
+      <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-cyan-300 mb-8 sm:mb-12 text-center tracking-wide">About Me</h2>
+      <p class="text-base sm:text-lg md:text-xl text-theme-secondary max-w-3xl mx-auto text-center leading-relaxed">
+        I'm a passionate software developer with expertise in Python automation, JavaScript interactivity, and full-stack web development. My mission is to create innovative, user-centric solutions that solve real-world problems with elegance and efficiency.
+      </p>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section id="skills" class="py-16 sm:py-24 md:py-32 bg-gray-800 fade-in">
+    <div class="container mx-auto px-4 sm:px-6 md:px-8">
+      <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-cyan-300 mb-8 sm:mb-12 text-center tracking-wide">Skills</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <i class="fab fa-python text-3xl sm:text-4xl md:text-5xl text-cyan-300 icon-glow"></i>
+          <div class="flex-1">
+            <p class="text-base sm:text-lg md:text-xl text-theme font-bold">Python</p>
+            <div class="skill-bar">
+              <div class="skill-fill" id="pythonBar"></div>
+            </div>
+            <span class="text-sm sm:text-base md:text-lg text-cyan-300 font-bold" id="pythonScore">0%</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 sm:gap-6">
+          <i class="fab fa-js-square text-3xl sm:text-4xl md:text-5xl text-cyan-300 icon-glow"></i>
+          <div class="flex-1">
+            <p class="text-base sm:text-lg md:text-xl text-theme font-bold">JavaScript</p>
+            <div class="skill-bar">
+              <div class="skill-fill" id="jsBar"></div>
+            </div>
+            <span class="text-sm sm:text-base md:text-lg text-cyan-300 font-bold" id="jsScore">0%</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 sm:gap-6">
+          <i class="fab fa-html5 text-3xl sm:text-4xl md:text-5xl text-cyan-300 icon-glow"></i>
+          <div class="flex-1">
+            <p class="text-base sm:text-lg md:text-xl text-theme font-bold">HTML</p>
+            <div class="skill-bar">
+              <div class="skill-fill" id="htmlBar"></div>
+            </div>
+            <span class="text-sm sm:text-base md:text-lg text-cyan-300 font-bold" id="htmlScore">0%</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 sm:gap-6">
+          <i class="fab fa-css3-alt text-3xl sm:text-4xl md:text-5xl text-cyan-300 icon-glow"></i>
+          <div class="flex-1">
+            <p class="text-base sm:text-lg md:text-xl text-theme font-bold">CSS</p>
+            <div class="skill-bar">
+              <div class="skill-fill" id="cssBar"></div>
+            </div>
+            <span class="text-sm sm:text-base md:text-lg text-cyan-300 font-bold" id="cssScore">0%</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 sm:gap-6">
+          <i class="fab fa-react text-3xl sm:text-4xl md:text-5xl text-cyan-300 icon-glow"></i>
+          <div class="flex-1">
+            <p class="text-base sm:text-lg md:text-xl text-theme font-bold">React</p>
+            <div class="skill-bar">
+              <div class="skill-fill" id="reactBar"></div>
+            </div>
+            <span class="text-sm sm:text-base md:text-lg text-cyan-300 font-bold" id="reactScore">0%</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4 sm:gap-6">
+          <i class="fab fa-node-js text-3xl sm:text-4xl md:text-5xl text-cyan-300 icon-glow"></i>
+          <div class="flex-1">
+            <p class="text-base sm:text-lg md:text-xl text-theme font-bold">Node.js</p>
+            <div class="skill-bar">
+              <div class="skill-fill" id="nodeBar"></div>
+            </div>
+            <span class="text-sm sm:text-base md:text-lg text-cyan-300 font-bold" id="nodeScore">0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Section -->
+  <section id="portfolio" class="py-16 sm:py-24 md:py-32 fade-in">
+    <div class="container mx-auto px-4 sm:px-6 md:px-8">
+      <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-cyan-300 mb-8 sm:mb-12 text-center tracking-wide">Portfolio</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 portfolio-grid" id="portfolio-grid">
+        <!-- Projects will be dynamically inserted here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 sm:py-24 md:py-32 bg-gray-800 fade-in">
+    <div class="container mx-auto px-4 sm:px-6 md:px-8">
+      <h2 class="text-4xl sm:text-5xl md:text-6xl font-extrabold text-cyan-300 mb-8 sm:mb-12 text-center tracking-wide">Contact</h2>
+      <div class="max-w-md sm:max-w-lg mx-auto">
+        <form id="contact-form" class="flex flex-col gap-4 sm:gap-6">
+          <input type="text" placeholder="Name" required class="p-3 sm:p-4 bg-theme-input text-theme-input text-sm sm:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-300" />
+          <input type="email" placeholder="Email" required class="p-3 sm:p-4 bg-theme-input text-theme-input text-sm sm:text-base rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-300" />
+          <textarea placeholder="Your Message" required class="p-3 sm:p-4 bg-theme-input text-theme-input rounded-xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-cyan-300 h-32 sm:h-40"></textarea>
+          <button type="submit" class="p-3 sm:p-4 bg-cyan-400 text-black text-sm sm:text-base font-bold rounded-xl btn-glow">Send</button>
+        </form>
+        <p id="form-message" class="text-center text-theme-secondary text-sm sm:text-base mt-4 sm:mt-6 hidden">Message sent (demo)!</p>
+        <div class="flex justify-center gap-4 sm:gap-6 mt-6 sm:mt-8">
+          <a href="#" class="text-2xl sm:text-3xl text-cyan-300 hover:text-cyan-200 icon-glow transition-all duration-300"><i class="fab fa-github"></i></a>
+          <a href="mailto:example@email.com" class="text-2xl sm:text-3xl text-cyan-300 hover:text-cyan-200 icon-glow transition-all duration-300"><i class="fas fa-envelope"></i></a>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal for Project Details -->
+  <div id="project-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-gray-900 rounded-xl p-6 max-w-2xl w-full relative">
+      <!-- Close button -->
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <i class="fas fa-times text-xl"></i>
+      </button>
+
+      <!-- Content -->
+      <h3 id="modal-title" class="text-3xl font-bold text-cyan-400 mb-6"></h3>
+      
+      <div class="mb-6 rounded-lg overflow-hidden">
+        <img id="modal-image" src="" alt="" class="w-full h-64 object-cover">
+      </div>
+      
+      <div class="mb-6">
+        <p id="modal-description" class="text-gray-300 text-lg"></p>
+      </div>
+      
+      <div id="modal-tags" class="flex flex-wrap gap-2 mb-6"></div>
+      
+      <div class="flex justify-between items-center">
+        <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" 
+           class="inline-flex items-center px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors duration-300">
+          <span>View Project</span>
+          <i class="fas fa-external-link-alt ml-2"></i>
+        </a>
+        
+        <button onclick="closeModal()" 
+                class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors duration-300">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top" class="fixed bottom-6 sm:bottom-8 right-6 sm:right-8 hidden">
+    <div class="relative group">
+      <span class="absolute -inset-2 bg-gradient-to-r from-primary-glow to-secondary-glow rounded-full opacity-75 group-hover:opacity-100 transition duration-300 blur"></span>
+      <div class="relative p-3 sm:p-4 bg-black bg-opacity-50 text-white rounded-full transform hover:scale-110 transition-all duration-300">
+        <i class="fas fa-arrow-up text-base sm:text-xl group-hover:animate-bounce"></i>
+      </div>
+    </div>
+  </button>
+
+  <!-- Footer -->
+  <footer class="py-6 sm:py-8 bg-gray-800 text-center text-theme-secondary text-sm sm:text-base">
+    © 2025 Triquetra Developer
+  </footer>
+  </div><!-- End content-wrapper -->
+
+  <!-- Lightbox JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+  <!-- JavaScript -->
+  <script>
+    // Three.js Scene Setup
+    let scene, camera, renderer, model;
+    let targetRotation = { x: 0, y: 0 };
+    let currentSection = 'home';
+    let mixer;
+    let clock = new THREE.Clock();
+
+    function initThree() {
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setClearColor(0x000000, 0);
+      renderer.outputEncoding = THREE.sRGBEncoding;
+      document.getElementById('three-container').appendChild(renderer.domElement);
+
+      // Enhanced lighting setup
+      // Ambient light for overall illumination
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+      scene.add(ambientLight);
+
+      // Main directional light (like sunlight)
+      const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
+      mainLight.position.set(10, 10, 10);
+      mainLight.castShadow = true;
+      scene.add(mainLight);
+
+      // Front fill light
+      const frontLight = new THREE.SpotLight(0x00ffcc, 1);
+      frontLight.position.set(0, 5, 15);
+      frontLight.angle = Math.PI / 4;
+      frontLight.penumbra = 0.5;
+      frontLight.decay = 1;
+      frontLight.distance = 100;
+      scene.add(frontLight);
+
+      // Back rim light
+      const rimLight = new THREE.SpotLight(0x00ccff, 0.8);
+      rimLight.position.set(0, 10, -15);
+      rimLight.angle = Math.PI / 4;
+      rimLight.penumbra = 0.5;
+      rimLight.decay = 1;
+      rimLight.distance = 100;
+      scene.add(rimLight);
+
+      // Side accent lights
+      const leftLight = new THREE.PointLight(0x00ffcc, 0.5);
+      leftLight.position.set(-10, 0, 0);
+      scene.add(leftLight);
+
+      const rightLight = new THREE.PointLight(0x00ccff, 0.5);
+      rightLight.position.set(10, 0, 0);
+      scene.add(rightLight);
+
+      // Enable shadow mapping
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+      // Load 3D Model
+      const loader = new THREE.GLTFLoader();
+      loader.load('gitkit_final.glb', function(gltf) {
+        model = gltf.scene;
+        model.scale.set(1, 1, 1); // Adjust scale as needed
+
+        // Enable shadows and enhance materials
+        model.traverse((node) => {
+          if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+            
+            // Enhance materials
+            if (node.material) {
+              node.material.roughness = 0.7;  // Adjust material roughness
+              node.material.metalness = 0.3;  // Adjust material metalness
+              if (node.material.map) {
+                node.material.map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+              }
+            }
+          }
+        });
+
+        scene.add(model);
+
+        // Setup animations if they exist
+        if (gltf.animations && gltf.animations.length) {
+          mixer = new THREE.AnimationMixer(model);
+          const action = mixer.clipAction(gltf.animations[0]);
+          action.play();
+        }
+
+        // Center the model
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.sub(center);
+
+        // Add subtle rotation animation
+        gsap.to(model.rotation, {
+          y: Math.PI * 2,
+          duration: 20,
+          repeat: -1,
+          ease: "none"
+        });
+      }, undefined, function(error) {
+        console.error('An error occurred loading the model:', error);
+      });
+
+      camera.position.z = 5;
+
+      // Handle window resize
+      window.addEventListener('resize', onWindowResize, false);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      if (model) {
+        // Smooth rotation
+        model.rotation.x += (targetRotation.x - model.rotation.x) * 0.05;
+        model.rotation.y += (targetRotation.y - model.rotation.y) * 0.05;
+      }
+
+      // Update animations
+      if (mixer) {
+        mixer.update(clock.getDelta());
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    function updateCubePosition(section) {
+      if (!model) return;
+
+      const positions = {
+        home: { x: 0, y: 2, rotation: { x: 0, y: 0 } },
+        about: { x: -2, y: 1, rotation: { x: Math.PI / 4, y: Math.PI / 4 } },
+        skills: { x: 2, y: 0, rotation: { x: Math.PI / 2, y: Math.PI / 2 } },
+        portfolio: { x: -1, y: -1, rotation: { x: Math.PI / 3, y: Math.PI / 3 } },
+        contact: { x: 1, y: -2, rotation: { x: Math.PI / 6, y: Math.PI / 6 } }
+      };
+
+      const position = positions[section];
+      gsap.to(model.position, {
+        x: position.x,
+        y: position.y,
+        duration: 1,
+        ease: "power2.inOut"
+      });
+
+      gsap.to(targetRotation, {
+        x: position.rotation.x,
+        y: position.rotation.y,
+        duration: 1,
+        ease: "power2.inOut"
+      });
+    }
+
+    // Initialize Three.js scene
+    initThree();
+    animate();
+
+    // Loading screen handler
+    window.addEventListener("load", () => {
+      const loadingScreen = document.getElementById("loading-screen");
+      setTimeout(() => {
+        loadingScreen.classList.add("fade-out");
+        document.body.style.overflow = "auto"; // Enable scrolling
+      }, 2000); // Show loading screen for 2 seconds
+    });
+
+    // Disable scrolling during loading
+    document.body.style.overflow = "hidden";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Add parallax effect to sections
+      window.addEventListener("scroll", () => {
+        const scrolled = window.pageYOffset;
+        document.querySelectorAll(".parallax").forEach(element => {
+          const speed = element.getAttribute("data-speed") || 0.5;
+          element.style.transform = `translateY(${scrolled * speed}px)`;
+        });
+      });
+
+      // Intersection Observer for sections
+      const pageSections = document.querySelectorAll('section');
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const sectionId = entry.target.id;
+            currentSection = sectionId;
+            updateCubePosition(sectionId);
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.3 });
+
+      pageSections.forEach(section => {
+        section.classList.add('section-transition');
+        sectionObserver.observe(section);
+      });
+
+      // Mobile Menu
+      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+      const navMenu = document.getElementById("nav-menu");
+      let isMenuOpen = false;
+      
+      function toggleMenu(open) {
+        isMenuOpen = open;
+        navMenu.classList.toggle("show", isMenuOpen);
+        mobileMenuBtn.classList.toggle("active", isMenuOpen);
+        document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+      }
+
+      mobileMenuBtn.addEventListener("click", () => {
+        isMenuOpen = !isMenuOpen;
+        toggleMenu(isMenuOpen);
+      });
+
+      // Close mobile menu when clicking a link
+      document.querySelectorAll(".nav-link").forEach(link => {
+        link.addEventListener("click", () => {
+          isMenuOpen = false;
+          toggleMenu(false);
+        });
+      });
+
+      // Close mobile menu when clicking outside
+      document.addEventListener("click", (e) => {
+        const isClickInsideMenu = navMenu.contains(e.target);
+        const isClickOnButton = mobileMenuBtn.contains(e.target);
+        
+        if (isMenuOpen && !isClickInsideMenu && !isClickOnButton) {
+          isMenuOpen = false;
+          toggleMenu(false);
+        }
+      });
+
+      // Prevent menu from staying open on window resize
+      window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && isMenuOpen) {
+          toggleMenu(false);
+        }
+      });
+
+      // Project data (add new projects here)
+      const projects = [
+        {
+          id: 1,
+          title: "Planet Explorer",
+          image: "https://private-user-images.githubusercontent.com/133372496/421765506-639b251d-1e8d-45b5-b2b9-6906f8e5d464.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTEwMjkyODEsIm5iZiI6MTc1MTAyODk4MSwicGF0aCI6Ii8xMzMzNzI0OTYvNDIxNzY1NTA2LTYzOWIyNTFkLTFlOGQtNDViNS1iMmI5LTY5MDZmOGU1ZDQ2NC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNjI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDYyN1QxMjU2MjFaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT04YTg5NDA2NjAzZTgwMzI3Nzk2MDhlYWRlNDQwOWExMTU1ZmQ0NWZmOTdhMDg4ZTAyYWNmMmU2MTZhMmQzMmIyJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.NSjjoSHgcUzWrnQYi6JSdCjuo8ueeJuPsWIdcwRtFzo",
+          description: "Planet Explorer is an interactive application built with Python, Pygame, and PyOpenGL. It features a sleek home screen with clickable planet thumbnails and a dynamic 3D planet view that supports intuitive rotation and zoom functionalities.",
+          link: "https://github.com/triquetradeveloper/Planet-explorer",
+          tags: ["Python", "Pygame", "OpenGL"]
+        },
+        {
+          id: 2,
+          title: " Mandelbrot Explorer",
+          image: "https://private-user-images.githubusercontent.com/133372496/449469578-89949d77-e282-44c3-a8b4-cad657910744.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTEwMzI1ODcsIm5iZiI6MTc1MTAzMjI4NywicGF0aCI6Ii8xMzMzNzI0OTYvNDQ5NDY5NTc4LTg5OTQ5ZDc3LWUyODItNDRjMy1hOGI0LWNhZDY1NzkxMDc0NC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwNjI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDYyN1QxMzUxMjdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0wMGIzZWRlMDM4MmI2ODYyNWRjOWEwZjQwNjlmYmQ3NzcwNGNiMmMyZjgxNjRiNzc2ZDUxZmRkMzUwNTBiN2VlJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.YoyVpHIB3GDOWfiidzYYG7tMq0LId_vEAZL4rNfaSbw",
+          description: "A dark-themed, interactive Mandelbrot Set explorer built with vanilla HTML, CSS, and JavaScript. Click to zoom in, right-click (or mouse wheel) to zoom out and explore infinite fractal beauty.",
+          link: "https://github.com/triquetradeveloper/Mandelbrot-explorer",
+          tags: ["HTML", "CSS", "JavaScript"]
+        }
+      ];
+
+      // Dynamically generate portfolio items
+      const portfolioGrid = document.getElementById("portfolio-grid");
+      projects.forEach(project => {
+        const projectCard = document.createElement("div");
+        projectCard.className = "project-card glass-modern border-gradient rounded-xl overflow-hidden cursor-pointer hover-lift group";
+        projectCard.innerHTML = `
+          <div class="relative overflow-hidden">
+            <img src="${project.image}" alt="${project.title}" class="w-full h-48 sm:h-56 md:h-64 object-cover transform transition-transform duration-700 group-hover:scale-110" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6">
+              <button class="viewDetailsBtn text-white text-lg font-bold tracking-wider transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 hover:text-cyan-300">
+                View Details
+                <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+          <div class="p-6 relative">
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <h3 class="relative text-xl sm:text-2xl font-bold gradient-text mb-3">${project.title}</h3>
+            <p class="relative text-sm sm:text-base text-theme-secondary mb-4">${project.description}</p>
+            <div class="relative flex flex-wrap gap-2">
+              ${project.tags.map(tag => `
+                <span class="relative group/tag">
+                  <span class="absolute -inset-1 bg-gradient-to-r from-primary-glow to-secondary-glow rounded-full opacity-0 group-hover/tag:opacity-25 transition duration-300 blur"></span>
+                  <span class="relative tag">${tag}</span>
+                </span>
+              `).join("")}
+            </div>
+          </div>
+        `;
+
+        // Add click event listener to the card
+        const viewDetailsBtn = projectCard.querySelector('.viewDetailsBtn');
+        viewDetailsBtn.addEventListener('click', () => {
+          const modal = document.getElementById('project-modal');
+          const modalTitle = document.getElementById('modal-title');
+          const modalImage = document.getElementById('modal-image');
+          const modalDescription = document.getElementById('modal-description');
+          const modalLink = document.getElementById('modal-link');
+          const modalTags = document.getElementById('modal-tags');
+
+          // Update modal content
+          modalTitle.textContent = project.title;
+          modalImage.src = project.image;
+          modalDescription.textContent = project.description;
+          modalLink.href = project.link;
+          modalTags.innerHTML = project.tags.map(tag => `
+            <span class="px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-sm">${tag}</span>
+          `).join('');
+
+          // Show modal
+          modal.style.display = 'flex';
+          modal.classList.remove('hidden');
+        });
+
+        portfolioGrid.appendChild(projectCard);
+      });
+
+      // Close modal when clicking close button
+      document.querySelectorAll('[onclick="closeModal()"]').forEach(button => {
+        button.addEventListener('click', () => {
+          const modal = document.getElementById('project-modal');
+          modal.style.display = 'none';
+          modal.classList.add('hidden');
+        });
+      });
+
+      // Close modal when clicking outside
+      document.getElementById('project-modal').addEventListener('click', function(e) {
+        if (e.target === this || e.target.classList.contains('backdrop-blur-sm')) {
+          const modal = document.getElementById('project-modal');
+          modal.style.display = 'none';
+          modal.classList.add('hidden');
+        }
+      });
+
+      // Typing logo
+      const logoText = "Triquetra Dev";
+      const logoEl = document.getElementById("logo-text");
+      let i = 0;
+      function typeLogo() {
+        if (i < logoText.length) {
+          logoEl.textContent += logoText[i++];
+          setTimeout(typeLogo, 80);
+        }
+      }
+      typeLogo();
+
+      // Section fade-in animation
+      const sections = document.querySelectorAll(".fade-in");
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) entry.target.classList.add("visible");
+        });
+      }, { threshold: 0.1 });
+      sections.forEach(s => observer.observe(s));
+
+      // Skill animations
+      const skills = [
+        { barId: "pythonBar", scoreId: "pythonScore" },
+        { barId: "jsBar", scoreId: "jsScore" },
+        { barId: "htmlBar", scoreId: "htmlScore" },
+        { barId: "cssBar", scoreId: "cssScore" },
+        { barId: "reactBar", scoreId: "reactScore" },
+        { barId: "nodeBar", scoreId: "nodeScore" }
+      ];
+
+      skills.forEach(skill => {
+        const bar = document.getElementById(skill.barId);
+        const scoreEl = document.getElementById(skill.scoreId);
+        const randomScore = Math.floor(Math.random() * 31) + 70; // 70 to 100
+        let current = 0;
+        const interval = setInterval(() => {
+          if (current <= randomScore) {
+            bar.style.width = current + "%";
+            scoreEl.textContent = current + "%";
+            current++;
+          } else {
+            clearInterval(interval);
+          }
+        }, 25);
+      });
+
+      // Theme toggle
+      const themeToggle = document.getElementById("theme-toggle");
+      function updateTheme(isDark) {
+        document.body.classList.remove("dark", "light");
+        document.body.classList.add(isDark ? "dark" : "light");
+        themeToggle.innerHTML = `<i class="fas ${isDark ? 'fa-moon' : 'fa-sun'}"></i>`;
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+        
+        // Update 3D scene colors
+        if (model) {
+          const primaryColor = isDark ? 0x00ffcc : 0x00ccff;
+          const secondaryColor = isDark ? 0x00ccff : 0x00ffcc;
+          const emissiveIntensity = isDark ? 0.5 : 0.3;
+
+          // Update lights
+          frontLight.color.setHex(primaryColor);
+          frontLight.intensity = isDark ? 1 : 0.8;
+
+          rimLight.color.setHex(secondaryColor);
+          rimLight.intensity = isDark ? 0.8 : 0.6;
+
+          leftLight.color.setHex(primaryColor);
+          leftLight.intensity = isDark ? 0.5 : 0.3;
+
+          rightLight.color.setHex(secondaryColor);
+          rightLight.intensity = isDark ? 0.5 : 0.3;
+
+          // Update model materials
+          model.traverse((child) => {
+            if (child.isMesh && child.material) {
+              const materials = Array.isArray(child.material) ? child.material : [child.material];
+              materials.forEach(mat => {
+                if (mat.emissive) {
+                  mat.emissive.setHex(isDark ? 0x003333 : 0x001111);
+                  mat.emissiveIntensity = emissiveIntensity;
+                }
+                // Adjust material properties based on theme
+                mat.roughness = isDark ? 0.7 : 0.5;
+                mat.metalness = isDark ? 0.3 : 0.4;
+              });
+            }
+          });
+        }
+      }
+
+      themeToggle.addEventListener("click", () => {
+        const isDark = !document.body.classList.contains("dark");
+        updateTheme(isDark);
+      });
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      updateTheme(savedTheme === "dark");
+
+      // Contact form demo
+      const form = document.getElementById("contact-form");
+      const formMessage = document.getElementById("form-message");
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        formMessage.classList.remove("hidden");
+        setTimeout(() => formMessage.classList.add("hidden"), 3000);
+        form.reset();
+      });
+
+      // Back to top button
+      const backToTop = document.getElementById("back-to-top");
+      window.addEventListener("scroll", () => {
+        backToTop.classList.toggle("hidden", window.scrollY < 200);
+      });
+      backToTop.addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // Download resume (demo)
+      document.getElementById("download-resume").addEventListener("click", e => {
+        e.preventDefault();
+        alert("Resume download feature is a demo. Replace with your resume PDF link.");
+      });
+
+      // Make functions globally available
+      window.openModal = openModal;
+      window.closeModal = closeModal;
+    });
+  </script>
+</body>
+</html>
